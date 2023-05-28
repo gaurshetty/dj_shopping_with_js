@@ -1,0 +1,24 @@
+<div class="paginator">
+  <div class="text-white text-center">
+
+      {% if prods.has_previous %}
+        <a class="btn btn-outline-info" href="?page=1">First</a>
+        <a class="btn btn-outline-info" href="?page={{ prods.previous_page_number }}">Prev</a>
+      {% endif %}
+      &ensp;
+      {% for num in prods.paginator.page_range %}
+        {% if prods.number == num %}
+          <a class="btn btn-info" href="?page={{num}}">{{num}}</a>
+        {% elif num > prods.number|add:'-3' and num < prods.number|add:'3' %}
+          <a class="btn btn-outline-info" href="?page={{num}}">{{num}}</a>
+        {% endif %}
+      {% endfor %}
+      &ensp;
+      {% if prods.has_next %}
+        <a class="btn btn-outline-info" href="?page={{ prods.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info" href="?page={{ prods.paginator.num_pages }}">Last</a>
+      {% endif %}
+
+  </div>
+</div>
+

@@ -1,0 +1,238 @@
+{% extends "index.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% load cust_filter %}
+{% block title %}
+Product Detail Page
+{% endblock title %}
+
+{% block body %}
+
+<div class="container bg-dark pt-4 pb-4">
+  <div class="row align-items-stretch">
+
+    <div class="col-lg-5 p-lg-0">
+      <div class="rounded bg-light text-dark p-2">
+        <h5 class="text-center ps-4 pe-4 pt-4 pb-2">Card Payment Settings</h5>
+        <h8 class="fw-bold mt-4 ps-4"><i class="fas fa-save me-2"></i>Saved Cards:</h8>
+        <div class="p-1">
+          <div class="ms-4 mt-2 me-4 border rounded d-flex justify-content-between align-items-center">
+            <div class="m-2 d-flex flex-row align-items-center">
+              <input class="form-check-input me-2" type="radio" name="customRadio" id="radio_1">
+              <img src="{% static 'assets/visa_credit_card.jpg' %}" class="rounded" width="60"/>
+              <div class="d-flex flex-column ms-3">
+                <span class="h6 mb-1">Visa Credit Card</span>
+                <span class="small text-muted">1234 XXXX XXXX 2570</span>
+              </div>
+            </div>
+            <div>
+              <input type="text" class="form-control bg-light me-2" placeholder="CVC" style="width: 70px; height: 35px"/>
+            </div>
+          </div>
+          <div class="ms-4 mt-2 me-4 border rounded d-flex justify-content-between align-items-center">
+            <div class="m-2 d-flex flex-row align-items-center">
+              <input class="form-check-input me-2" type="radio" name="customRadio" id="radio_2">
+              <img src="{% static 'assets/master_credit_card.jpg' %}" class="rounded" width="60"/>
+              <div class="d-flex flex-column ms-3">
+                <span class="h6 mb-1">Master Debit Card</span>
+                <span class="small text-muted">5842 XXXX XXXX 6644</span>
+              </div>
+            </div>
+            <div>
+              <input type="text" class="form-control bg-light me-2" placeholder="CVC" style="width: 70px; height: 35px"/>
+            </div>
+          </div>
+          <div class="ms-4 mt-2 me-4 border rounded d-flex justify-content-between align-items-center">
+            <div class="m-2 d-flex flex-row align-items-center">
+              <input class="form-check-input me-2" type="radio" name="customRadio" id="radio_3">
+              <img src="{% static 'assets/american_express_credit_card.jpg' %}" class="rounded" width="60"/>
+              <div class="d-flex flex-column ms-3">
+                <span class="h6 mb-1">American Express Card</span>
+                <span class="small text-muted">2648 XXXX XXXX 7823</span>
+              </div>
+            </div>
+            <div>
+              <input type="text" class="form-control bg-light me-2" placeholder="CVC" style="width: 70px; height: 35px"/>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2 me-4">
+          <div class="text-md-end"><a class="btn btn-outline-dark btn-sm">Remove Card</a></div>
+        </div>
+        <div class="row mt-2 ms-4 me-4">
+          <div class="text-md-start"><a class="fw-bold"><i class="fas fa-plus-circle pe-2" style="color:blue"></i>Add new card:</a></div>
+        </div>
+        <form method="post">
+          {% csrf_token %}
+          <div class="row mt-2 mb-2 ms-4 me-4">
+            <div class="col-md-12"><label class="labels text-dark"><small>Card Holder's Name</small></label>
+              <input type="text" name="name" class="form-control form-control-sm bg-light text-dark" placeholder="Card Holder's Name" required></div>
+            <div class="col-md-6"><label class="labels text-dark"><small>Card Number</small></label>
+              <input type="text" name="card_no" class="form-control form-control-sm bg-light text-dark" placeholder="XXXX-XXXX-XXXX-XXXX"></div>
+            <div class="col-md-3"><label class="labels text-dark"><small>Expire</small></label>
+              <input type="text" name="expiry" class="form-control form-control-sm bg-light text-dark" placeholder="MM/YY"></div>
+            <div class="col-md-3"><label class="labels text-dark"><small>CVV</small></label>
+              <input type="text" name="cvv" class="form-control form-control-sm bg-light text-dark" placeholder="XXX"></div>
+          </div>
+          <div class="d-grid col-6 mt-3 mb-3 mx-auto">
+            <button class="btn btn-primary" type="submit">ADD CARD</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="col-lg-1 p-lg-0"></div>
+    <div class="col-lg-6 p-lg-0">
+      <div class="rounded bg-light text-dark p-4">
+        <h5 class="text-center ps-4 pe-4 pt-2 pb-2">Select Payment Method</h5>
+        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+          <li class="nav-item"><a class="nav-link fw-bold bg-light text-dark active" id="card-tab" data-bs-toggle="tab"
+            href="#card-pay" role="tab" aria-controls="card-pay" aria-selected="true"><i class="fas fa-credit-card pe-1"></i>Card Pay</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold bg-light text-dark" id="bank-tab" data-bs-toggle="tab"
+            href="#bank-pay" role="tab" aria-controls="reviews" aria-selected="false"><i class="fas fa-building pe-1"></i>Bank Pay</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold bg-light text-dark" id="mobile-tab" data-bs-toggle="tab"
+            href="#mobile-pay" role="tab" aria-controls="reviews" aria-selected="false"><i class="fa fa-mobile pe-1"></i> Mobile Pay</a></li>
+        </ul>
+        <div class="tab-content mb-5" id="myTabContent">
+          <div class="tab-pane fade show active" id="card-pay" role="tabpanel" aria-labelledby="card-tab">
+            <div class="pt-4 p-lg-4 bg-light text-dark">
+              <div class="row align-items-center text-center">
+                <div class="col-md-6 text-md-start"><h8><strong>Invoice No.:</strong> {{transaction_id}}</h8></div>
+                <div class="col-md-6 text-md-end"><h8><strong>Date:</strong> {{date}}</h8></div>
+                <div class="col-md-6 text-md-start"><h8><strong>Service Charges:</strong> Rs. 5.00</h8></div>
+                <div class="col-md-6 text-md-end"><h8><strong>Order:</strong> {{order.complete}}</h8></div>
+              </div>
+              <form id="payment-card" method="post">
+                {% csrf_token %}
+                <div class="row mt-4 mb-4">
+                  <div class="col-md-12 mb-2"><label class="labels text-dark"><small>Card Holder's Name</small></label>
+                    <input type="text" name="customer_name" class="form-control bg-light text-dark" placeholder="Card Holder's Name" required></div>
+                  <div class="col-md-12 mb-2"><label class="labels text-dark"><small>Card Number</small></label>
+                    <input type="text" name="card_num" class="form-control bg-light text-dark" placeholder="XXXX-XXXX-XXXX-XXXX" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>Expire</small></label>
+                    <input type="text" name="expiry" class="form-control bg-light text-dark" placeholder="MM/YY" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>CVV</small></label>
+                    <input type="text" name="cvv" class="form-control bg-light text-dark" placeholder="XXX" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>Amount</small></label>
+                    <input type="text" name="amount" class="form-control bg-light text-dark" placeholder="{{order.get_cart_total|add:45}}.00" required></div>
+                </div>
+                <div class="row align-items-center text-center">
+                  <div class="col-md-6 text-md-start"><a class="btn btn-dark" href="{% url 'checkout' %}">Cancel</a></div>
+                  <div class="col-md-6 text-md-end"><button class="btn btn-success payment-done" name="card_payment" type="submit">Pay Now</button></div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="bank-pay" role="tabpanel" aria-labelledby="bank-tab">
+            <div class="pt-4 p-lg-4 bg-light text-dark">
+              <div class="row align-items-center text-center">
+                <div class="col-md-6 text-md-start"><h8><strong>Invoice No.:</strong> {{transaction_id}}</h8></div>
+                <div class="col-md-6 text-md-end"><h8><strong>Date:</strong> {{date}}</h8></div>
+                <div class="col-md-12 text-md-start"><h8><strong>Service Charges:</strong> Rs. 5.00</h8></div>
+              </div>
+              <form  id="payment-bank" method="post">
+                {% csrf_token %}
+                <div class="row mt-4 mb-4">
+                  <div class="col-md-8 mb-2"><label class="labels text-dark"><small>Bank Name</small></label>
+                    <input type="text" name="bank_name" class="form-control bg-light text-dark" placeholder="Bank Name" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>Branch</small></label>
+                    <input type="text" name="branch" class="form-control bg-light text-dark" placeholder="Branch" required></div>
+                  <div class="col-md-12 mb-2"><label class="labels text-dark"><small>Account Owner Name</small></label>
+                    <input type="text" name="customer_name" class="form-control bg-light text-dark" placeholder="Account Owner Name" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>Account Number</small></label>
+                    <input type="text" name="account_num" class="form-control bg-light text-dark" placeholder="Account Number" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>IFSC Code</small></label>
+                    <input type="text" name="ifsc" class="form-control bg-light text-dark" placeholder="IFSC Code" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels text-dark"><small>Amount</small></label>
+                    <input type="text" name="amount" class="form-control bg-light text-dark" placeholder="{{order.get_cart_total|add:45}}.00" required></div>
+                </div>
+                <div class="row align-items-center text-center">
+                  <div class="col-md-6 text-md-start"><a class="btn btn-dark" href="{% url 'checkout' %}">Cancel</a></div>
+                  <div class="col-md-6 text-md-end"><button class="btn btn-success payment-done" name="bank_payment" type="submit">Pay Now</button></div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="mobile-pay" role="tabpanel" aria-labelledby="mobile-tab">
+            <div class="pt-4 ps-4 pe-4 pb-1 bg-light text-dark">
+              <div class="row align-items-center text-center">
+                <div class="col-md-6 text-md-start"><h8><strong>Invoice No.:</strong> {{transaction_id}}</h8></div>
+                <div class="col-md-6 text-md-end"><h8><strong>Date:</strong> {{date}}</h8></div>
+                <div class="col-md-12 text-md-start"><h8><strong>Service Charges:</strong> Rs. 5.00</h8></div>
+              </div>
+              <form id="payment-mobile" method="post">
+                {% csrf_token %}
+                <div class="row mt-1">
+                  <div class="col-md-8 mb-2"><label class="labels"><small>Customer Name</small></label>
+                    <input type="text" name="customer_name" class="form-control bg-light text-dark" placeholder="Customer Name" required></div>
+                  <div class="col-md-4 mb-2"><label class="labels"><small>Amount</small></label>
+                    <input type="text" name="amount" class="form-control bg-light text-dark" placeholder="{{order.get_cart_total|add:45}}.00" required></div>
+                </div>
+                <div class="text-center">
+                  <img class="text-center" src="{% static 'assets/qrcode.png' %}" width="200px">
+                </div>
+                <div class="row align-items-center text-center">
+                  <div class="col-md-6 text-md-start"><a class="btn btn-dark" href="{% url 'checkout' %}">Cancel</a></div>
+                  <div class="col-md-6 text-md-end"><button data-action="payment" class="btn btn-success payment-done" name="mobile_payment" type="submit">Pay Now</button></div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+label, p {
+    color: dark !important;
+}
+</style>
+<script type="text/javascript">
+var paymentbtn = document.getElementsByClassName('payment-done')
+
+
+paymentbtn[0].addEventListener('click',function(){
+        console.log('USER:', user)
+
+        if (user == 'AnonymousUser') {
+            paymentProcess1()
+        }
+    })
+
+function paymentProcess1() {}
+
+function paymentProcess() {
+    var orderComplete = '{{order.complete}}'
+    console.log('order:', orderComplete)
+
+    var url = '/payment/'
+    fetch(url,{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'X-CSRFToken':csrftoken,
+        },
+        body:JSON.stringify({'payment':'done'})
+    })
+    .then((response) => response.json())
+    .then(() => {
+        var orderComplete = '{{order.complete}}'
+        console.log('order:', orderComplete);
+
+        if (orderComplete == 'True') {
+            console.log('Delete cart')
+            cart = {}
+        }
+        console.log('cart:', cart)
+        document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+        alert('Transaction completed');
+    })
+}
+
+</script>
+
+{% endblock body %}

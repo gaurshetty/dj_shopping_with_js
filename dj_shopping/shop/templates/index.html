@@ -1,0 +1,285 @@
+<!doctype html>
+{% load static %}
+{% load cust_filter %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{% static 'assets/cart.png' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{% static 'css/footer.css' %}" rel="stylesheet">
+    <script type="text/javascript">
+        var user = '{{request.user}}'
+
+        function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+
+        function getCookie(name) {
+            //Split cookie string and get all individual name=value in an array
+            var cookieArr = document.cookie.split(";");
+            //Loop through the array elements
+            for(var i=0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split("=");
+                /* Removing whitespace at the beginning of the cookie name and compare it with the given string */
+                if(name == cookiePair[0].trim()) {
+                    // Decode the cookie value and return.
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+
+        // Return null if not found
+        return null;
+        }
+        var cart = JSON.parse(getCookie('cart'))
+        if(cart == undefined){
+            cart = {}
+            console.log('Cart was created!')
+            document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+        }
+        console.log('cart:', cart)
+        var wishlist = JSON.parse(getCookie('wishlist'))
+        if(wishlist == undefined){
+            wishlist = {}
+            console.log('Wishlist was created!')
+            document.cookie = 'wishlist=' + JSON.stringify(wishlist) + ";domain=;path=/"
+        }
+        console.log('wishlist:', wishlist)
+    </script>
+
+
+    <title>
+        {% block title %}
+        {% endblock title %}
+    </title>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fw-bold">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <img class="pl-4" src="{% static 'assets/cart.png' %}" width="30px" height="30px">
+            ShettyMart
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'product' %}">Product</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'new_arrival' %}">New Arrival</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}" tabindex="-1" aria-disabled="true">About</a>
+                </li>
+            </ul>
+            <form method="get" class="d-flex pe-3" action="{% url 'product_search' %}">
+                <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+            </form>
+            <form class="d-flex pe-3" action="">
+                <a class="btn btn-outline-light" href="{% url 'cart' %}">
+                    <i class="fa fa-shopping-cart" style="color:red"></i>
+                    <span class="badge bg-secondary text-white ms-1 rounded-pill">{{cart_items}}</span>
+                </a>
+            </form>
+            <form class="d-flex pe-3" action="">
+                <a class="btn btn-outline-light" href="{% url 'wishlist' %}">
+                    <i class='fa fa-heart' style='color: red'></i>
+                    <span class="badge bg-secondary text-white ms-1 rounded-pill">{{wishlist|length}}</span>
+                </a>
+            </form>
+            <ul class="navbar-nav text-right">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'profile' %}" style="color:red">{{user.username|title}}</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Navbar end -->
+<div class="container">
+    {% bootstrap_messages %}
+</div>
+
+<div class="d-flex flex-column h-100">
+    <!-- FOR DEMO PURPOSE -->
+    <section class="hero text-white py-5 flex-grow-1">
+        <div class="container py-4">
+        {% block body %}
+
+        {% endblock body %}
+        </div>
+    </section>
+
+    <!-- SERVICES-->
+    <section class=" bg-secondary">
+      <div class="container">
+        <div class="row text-center gy-3">
+          <div class="col-lg-4">
+            <div class="d-inline-block">
+              <div class="d-flex align-items-end">
+                <img src="{% static 'assets/shipping1.png' %}" width="80px">
+                <div class="text-start ms-3">
+                  <h3 class="text-uppercase fw-bold mb-1">Free shipping</h3>
+                  <p class="text-sm mb-0"><em>Free shipping worldwide</em></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="d-inline-block">
+              <div class="d-flex align-items-end">
+                <img src="{% static 'assets/24-7-service.png' %}" width="80px">
+                <div class="text-start ms-3">
+                  <h3 class="text-uppercase fw-bold mb-1">24 x 7 service</h3>
+                  <p class="text-sm mb-0"><em>Free shipping worldwide</em></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="d-inline-block">
+              <div class="d-flex align-items-end">
+                <img src="{% static 'assets/festival.png' %}" width="80px">
+                <div class="text-start ms-3">
+                  <h3 class="text-uppercase fw-bold mb-1">Festivaloffers</h3>
+                  <p class="text-sm mb-0"><em>Free shipping worldwide</em></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="w-100 py-4 flex-shrink-0">
+        <div class="container">
+            <div class="row gy-4 gx-5">
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="h1 text-white">
+                        <img class="pl-4" src="{% static 'assets/cart.png' %}" width="50px" height="50px">
+                        ShettyMart
+                    </h5>
+                    <p class="small text-muted">If you would like to experience the best of online shopping for men, women and kids in India, you are at the right place. </p>
+                    <p class="small text-muted mb-0">&copy; Copyrights. All rights reserved. <a class="text-primary" href="{% url 'home' %}">ShettyMart.com</a>
+                    </p>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-3">Shopping</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="#">Men</a></li>
+                        <li><a href="#">Women</a></li>
+                        <li><a href="#">Kids</a></li>
+                        <li><a href="#">Beauty</a></li>
+                        <li><a href="#">Decore</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="text-white mb-3">Quick links</h5>
+                    <ul class="list-unstyled text-muted">
+                        <li><a href="#">Glossary</a></li>
+                        <li><a href="#">Home & Living</a></li>
+                        <li><a href="#">Fashion</a></li>
+                        <li><a href="#">Designers</a></li>
+                        <li><a href="#">Accessories</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="text-white mb-3">Newsletter</h5>
+                    <p class="small text-muted">With ShettyMart newsletter you will get updates here.</p>
+                    <form action="#">
+                        <div class="input-group mb-3">
+                            <input class="form-control" type="text" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+                            <button class="btn btn-primary" id="button-addon2" type="button"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </form>
+                    <!-- Facebook -->
+                    <a class="btn btn-primary" style="background-color: #3b5998;" href="#!" role="button"><i class="fab fa-facebook-f"></i></a>
+                    <!-- Twitter -->
+                    <a class="btn btn-primary" style="background-color: #55acee;" href="#!" role="button"><i class="fab fa-twitter"></i></a>
+                    <!-- Pinterest -->
+                    <a class="btn btn-primary" style="background-color: #c61118;" href="#!" role="button"><i class="fab fa-pinterest"></i></a>
+                    <!-- Github -->
+                    <a class="btn btn-primary" style="background-color: #333333;" href="#!" role="button"><i class="fab fa-github"></i></a>
+                    <!-- Dribbble -->
+                    <a class="btn btn-primary" style="background-color: #ec4a89;" href="#!" role="button"><i class="fab fa-dribbble"></i></a>
+                    <!-- Reddit -->
+                    <a class="btn btn-primary" style="background-color: #ff4500;" href="#!" role="button"><i class="fab fa-reddit-alien"></i></a>
+                    <!-- Whatsapp -->
+                    <a class="btn btn-primary" style="background-color: #25d366;" href="#!" role="button"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+
+<!-- Optional JavaScript; choose one of the two! -->
+<!-- Option 1: Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<!-- Option 2: Separate Popper and Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+        integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
+        integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
+        crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static 'js/cart.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/wishlist.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/quantity.js' %}"></script>
+
+<style>
+form, input, label, p {
+    color: white !important;
+}
+</style>
+
+</body>
+</html>
+

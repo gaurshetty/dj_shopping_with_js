@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}
+Login Page
+{% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 pt-4 pb-4 mx-auto content bg-dark">
+            <div class="text-center">
+                <img class="mb-1" src="{% static 'assets/cart.png' %}" width="50px">
+                <h1 class="h3 mb-1 font-weight-normal">Login to your account!</h1><br>
+            </div><hr>
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    {% bootstrap_form form %}
+                </fieldset>
+                <div class="pb-3">
+                    <small class="text-muted">Forgot your password ?<a class="ms-2" href="{% url 'password_reset' %}">Reset Password</a></small>
+                </div>
+                <div class="d-grid gap-2 col-6 mx-auto form-group">
+                    <button class="btn btn-info mb-4" type="submit" value="Submit">Login</button>
+                </div>
+            </form>
+            <div class="border-top pt-3">
+                <small class="text-muted">Does not have an account?<a class="ms-2" href="{% url 'register' %}">Sign Up</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+form, input, label, p {
+    color: white !important;
+}
+</style>
+
+{% endblock body %}

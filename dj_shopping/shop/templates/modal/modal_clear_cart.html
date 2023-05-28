@@ -1,0 +1,21 @@
+<!-- Modal -->
+<div class="modal fade" id="ClearCartModal" tabindex="-1" aria-labelledby="ClearCartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content text-dark">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ClearCartModalLabel">Clear Cart</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure, want to clear your cart?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+        <form method="post">
+          {% csrf_token %}
+          <button class="btn btn-danger" name="clear" type="submit">Yes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

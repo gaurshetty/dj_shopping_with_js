@@ -1,0 +1,177 @@
+{% extends "index.html" %}
+{% load static %}
+{% load cust_filter %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+Invoice Page
+{% endblock title %}
+
+{% block body %}
+
+
+<div class="container bg-dark pt-4 pb-4">
+  <div class="row align-items-stretch">
+
+    <div class="col p-lg-0">
+      <div class="rounded bg-light text-dark p-2">
+        <div class="page-tools ps-4 pe-4 pt-4 pb-2 list-inline">
+          <div class="action-buttons text-end">
+              <a class="btn btn-dark mx-1px text-95" onclick="window.print()"><i class="bi bi-printer-fill"></i> Print</a>
+              <a class="btn btn-danger mx-1px text-95" href="{% url 'get_pdf' order.id %}" data-title="PDF" type="submit"><i class="bi bi-file-earmark-pdf w-2"></i> Export</a>
+          </div>
+          <div class="text-center">
+            <h5>--- # INVOICE # ---</h5>
+          </div>
+				</div><hr>
+        <div class="container-fluid" style="background-color:#33475b; color:white">
+          <div class="p-4">
+            <div class="row">
+              <div class="col-lg-6 p-lg-0">
+                <img src="{% static 'assets/cart.png' %}" style="margin-left:40px" width="50px" height="50px">
+                <h3 class="fw-bold ">ShettyMart</h3>
+                <span class="text-center mb-1"><small>UNLIMITED SHOPPING WITH ENDLESS JOY!</small></span>
+              </div>
+              <div class="col-lg-6 p-lg-0">
+                <div class="text-end">
+                  <h6 class="h7 fw-bold">Office Address:</h6>
+                  <a>ShettyMart Private Limited,</a><br>
+                  <a>Buildings Alyssa, Begonia &</a><br>
+                  <a>Clove Embassy Tech Village,</a><br>
+                  <a>Pune, Maharashtra, India, 411041</a><br>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-1">
+          <div class="ms-4 mt-2 me-4 border rounded">
+            <div class="row">
+              <div class="col-lg-6 p-lg-0">
+                <div class="ms-4 mt-2 me-4 text-md-start">
+                  <h6 class="text-dark"><strong>Bill To: </strong></h6>
+                  <a>{{user.first_name|title}} {{user.last_name|title}}</a><br>
+                  <a><small>{{address.house|title}},</small></a><br>
+                  <a><small>{{address.street|title}},</small></a><br>
+                  <a><small>{{address.city|title}}, {{address.state|title}}, {{address.pincode}}</small></a><br>
+                  <a><small><strong>{{address.phone}}</strong></small></a><br>
+                </div>
+              </div>
+              <div class="col-lg-6 p-lg-0">
+                <div class="ms-4 mt-2 mb-2 me-4 text-md-end">
+                  <a class="text-dark"><strong>Invoice No: </strong></a><br>
+                  <a class="text-dark">{{ order.transaction_id }}</a><br>
+                  <a class="text-dark"><strong>Order Completion Date: </strong></a><br>
+                  <a class="text-dark">{{ order.completed_date }}</a><br>
+                  <a class="text-dark"><strong>Order Status: </strong></a><br>
+                  {% if order.complete %}
+                  <a class="btn btn-success btn-sm">Paid order</a><br>
+                  {% else %}
+                  <a class="btn btn-danger btn-sm">Unpaid order</a><br>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ms-4 mt-2 me-4 border rounded">
+            <table class="table" width="100%">
+              <col style="width:10%">
+              <col style="width:50%">
+              <col style="width:10%">
+              <col style="width:10%">
+              <col style="width:10%">
+              <col style="width:10%">
+              <thead>
+                <tr>
+                  <th scope="col">Sr.No.</th>
+                  <th scope="col" class="text-wrap">Product Name</th>
+                  <th scope="col">@Price</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Discount</th>
+                  <th scope="col">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr>
+                  <td class="ps-4">{{ forloop.counter }}</td>
+                  <td>{{ item.product.name }}</td>
+                  <td>{{ item.product.price }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-center">{{ item.product.discount }}%</td>
+                  <td class="text-center">{{ item.get_total }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <th colspan="3" class="text-end">Total :</th>
+                  <td class="text-center fw-bold">{{order.get_cart_items}}</td>
+                  <td></td>
+                  <td class="text-center fw-bold">{{order.get_cart_total}}</td>
+                </tr>
+                <tr>
+                  <th colspan="3" class="text-end fw-normal">Shipping Charges :</th>
+                  <td></td><td></td><td class="text-center ps-4">40.0</td>
+                </tr>
+                <tr>
+                  <th colspan="3" class="text-end text-danger">Grand Total :</th>
+                  <td></td><td></td><td class="text-center text-danger fw-bold">{{order.get_cart_total|add:40}}.0</td>
+                </tr>
+
+                {% if items|length < 10 %}
+                {% for i in items|length|blank_table:10 %}
+                <tr><th colspan="0" class="text-white">.</th></tr>
+                {% endfor %}
+                {% endif %}
+
+              </tbody>
+            </table>
+          </div>
+          <div class="ms-4 mt-2 me-4 border rounded">
+            <div class="container-fluid" style="background-color:#33475b; color:white">
+              <div class="p-4">
+                <div class="row">
+                  <div class="col-lg-6 p-lg-0">
+                    <h6 class="h7 fw-bold">Note:</h6>
+                    <h8><small>Order can be cancelled only within the 24 hours of order confirmation. Please read the terms and
+                      condition before order cancellation. </small></h8>
+                  </div>
+                  <div class="col-lg-6 p-lg-0">
+                    <div class="text-end">
+                      <h6 class="h7 fw-bold">Total:</h6>
+                      <h1 class="fw-bold"><i class="bi bi-currency-rupee"></i> {{order.get_cart_total|add:40}}.00</h1>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ms-4 mt-2 me-4 border rounded">
+            <p class="small text-center text-muted mt-2 mb-0">&copy; Copyrights. All rights reserved. <a class="text-primary" href="{% url 'home' %}">ShettyMart.com</a><hr>
+            <div class="text-center">
+              <!-- Facebook -->
+              <a class="btn btn-primary" style="background-color: #3b5998;" href="#!" role="button"><i class="fab fa-facebook-f"></i></a>
+              <!-- Twitter -->
+              <a class="btn btn-primary" style="background-color: #55acee;" href="#!" role="button"><i class="fab fa-twitter"></i></a>
+              <!-- Pinterest -->
+              <a class="btn btn-primary" style="background-color: #c61118;" href="#!" role="button"><i class="fab fa-pinterest"></i></a>
+              <!-- Github -->
+              <a class="btn btn-primary" style="background-color: #333333;" href="#!" role="button"><i class="fab fa-github"></i></a>
+              <!-- Dribbble -->
+              <a class="btn btn-primary" style="background-color: #ec4a89;" href="#!" role="button"><i class="fab fa-dribbble"></i></a>
+              <!-- Reddit -->
+              <a class="btn btn-primary" style="background-color: #ff4500;" href="#!" role="button"><i class="fab fa-reddit-alien"></i></a>
+              <!-- Whatsapp -->
+              <a class="btn btn-primary" style="background-color: #25d366;" href="#!" role="button"><i class="fab fa-whatsapp"></i></a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+{% endblock body %}

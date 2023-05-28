@@ -1,0 +1,154 @@
+{% extends "index.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% load cust_filter %}
+{% block title %}
+Product Detail Page
+{% endblock title %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<div class="container bg-dark pt-4 pb-4">
+
+        <div class="row align-items-stretch">
+          <div class="col-lg-6 p-lg-0">
+
+            <div class="col-md-6" id="b_image">
+              <img class="rounded mx-auto text-center" src="{{ prod.image1.url }}" alt="{{product.name}}" width="550px">
+            </div>
+            <div class="row">
+              <div class="col-md-12 text-center" id="s_image">
+                <img src="{{ prod.image1.url }}" alt="{{product.name}}" width="100" height="100" class="p-2">
+                <img src="{{ prod.image2.url }}" alt="{{product.name}}" width="100" height="100" class="p-2">
+                <img src="{{ prod.image3.url }}" alt="{{product.name}}" width="100" height="100" class="p-2">
+              </div>
+            </div>
+
+          </div>
+          <div class="col-lg-6">
+            <div class="ps-4 pe-4 my-md-4">
+              <div class="pb-2">
+                {% if prod.badge == 'New' %}
+                <div class="badge text-white bg-info">{{prod.badge}}</div>
+                {% elif prod.badge == 'Sold' %}
+                <div class="badge text-white bg-danger">{{prod.badge}}</div>
+                {% else %}
+                <div class="badge text-white bg-secondary">{{prod.badge}}</div>
+                {% endif %}
+              </div>
+              <h1 class="h3">{{ prod.name }}</h1><hr>
+              <ul class="list-inline mb-2">
+                {% for i in prod.ratings|get_range %}
+                <li class="list-inline-item m-0"><i class="fas fa-star small text-warning"></i></li>
+                {% endfor %}
+                {% for i in prod.ratings|get_sub_range %}
+                <li class="list-inline-item m-0"><i class="far fa-star small text-warning"></i></li>
+                {% endfor %}
+              </ul>
+              <div class="pt-2 pb-1">
+                <h6 class="text-muted fs-5 fw-bold"><i class="bi bi-currency-rupee" style="color:light"></i>{{ prod.price }}</h6>
+                <h6 class="text-muted fst-italic"><i class="bi bi-currency-rupee" style="color:light"></i><strike>{{ prod.price|get_orignal_price:prod.discount }}</strike>
+                &ensp;<strong style="color:red">@{{ prod.discount }}% discount</strong></h6>
+                <p class="text-muted"><strong>Description: </strong><br><small>{{ prod.description|truncate_n:200|add:". . ." }}</small></p>
+              </div>
+              <div class="d-flex">
+                <p class="list-inline fw-bold text-muted">Colors:&ensp;</p>
+                <ul class="list-inline">
+                  {% for color in prod.colors|list_filter %}
+                    <li class="list-inline-item m-0"><i class="fas fa-square" style="color: {{ color }}"></i></li>
+                  {% endfor %}
+                </ul>
+              </div>
+              <div class="pb-4">
+                {% if prod.brand %}<h6 class="text-muted"><strong>Brand:&ensp;</strong>{{ prod.brand }}</h6>{% endif %}
+                {% if prod.category %}<h6 class="text-muted"><strong>Category:&ensp;</strong>{{ prod.category }}</h6>{% endif %}
+              </div><hr>
+
+
+                  <div class="row">
+                    <div class="col-6 d-grid">
+                      {% if prod.id in prodlist %}
+                        <button name="remove_wishlist" value="{{prod.id}}" data-product={{prod.id}} data-action="remove" class="btn btn-light fw-bold update-wishlist" type="submit"><i class="fas fa-heart me-2" style="color:red"></i>In wish list</button>
+                      {% else %}
+                        <button name="add_wishlist" value="{{prod.id}}" data-product={{prod.id}} data-action="add" class="btn btn-light fw-bold update-wishlist" type="submit"><i class="far fa-heart me-2"></i>Add to wish list</button>
+                      {% endif %}
+                    </div>
+                    <div class="col-6 d-grid">
+                      <button name="cart" value="{{prod.id}}" data-product={{prod.id}} data-action="add" class="btn btn-light btn-sm fw-bold update-cart" type="submit"><i class="fa fa-shopping-cart me-2"></i>Add to cart</button>
+                    </div>
+                  </div>
+
+            </div>
+          </div>
+        </div>
+        <br>
+        <!-- DETAILS TABS-->
+        <ul class="nav nav-tabs border-0" id="myTab" role="tablist">
+          <li class="nav-item"><a class="nav-link fw-bold text-secondary text-uppercase active" id="description-tab" data-bs-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a></li>
+          <li class="nav-item"><a class="nav-link fw-bold text-secondary text-uppercase" id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a></li>
+        </ul>
+        <div class="tab-content mb-5" id="myTabContent">
+          <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+            <div class="p-4 p-lg-5">
+              <h6 class="text-uppercase">Product description </h6>
+              <p class="text-muted text-sm mb-0">{{ prod.description }}</p>
+            </div>
+          </div>
+          <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+            <div class="p-4 p-lg-5">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="d-flex mb-3">
+                    <div class="flex-shrink-0"><img class="rounded-circle" src="{% static 'img/customer-1.png' %}" alt="" width="50"/></div>
+                    <div class="ms-3 flex-shrink-1">
+                      <h6 class="mb-0 text-uppercase">Jason Doe</h6>
+                      <p class="small text-muted mb-0 text-uppercase">20 May 2020</p>
+                      <ul class="list-inline mb-1 text-xs">
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                      </ul>
+                      <p class="text-sm mb-0 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                  </div>
+                  <div class="d-flex">
+                    <div class="flex-shrink-0"><img class="rounded-circle" src="{% static 'img/customer-2.png' %}" alt="" width="50"/></div>
+                    <div class="ms-3 flex-shrink-1">
+                      <h6 class="mb-0 text-uppercase">Jane Doe</h6>
+                      <p class="small text-muted mb-0 text-uppercase">20 May 2020</p>
+                      <ul class="list-inline mb-1 text-xs">
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star text-warning"></i></li>
+                        <li class="list-inline-item m-0"><i class="fas fa-star-half-alt text-warning"></i></li>
+                      </ul>
+                      <p class="text-sm mb-0 text-muted">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+</div>
+
+<script src="{% static 'js/quantity.js' %}"></script>
+<script>
+   var b_image = document.getElementById('b_image');
+   var s_image = document.getElementById('s_image').getElementsByTagName('img');
+    for(var i = 0; i < s_image.length; i++){
+
+        s_image[i].addEventListener('click', full_image);
+    }
+    function full_image(){
+        var ImageSRC = this.getAttribute('src');
+        b_image.innerHTML = "<img src=" + ImageSRC + " width='550' height='550'>";
+    }
+
+</script>
+
+{% endblock body %}

@@ -1,0 +1,159 @@
+{% extends "index.html" %}
+{% load static %}
+{% load cust_filter %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+Cart Page
+{% endblock title %}
+
+{% block body %}
+{% include "modal/modal_clear_cart.html" %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+<section class="py-1">
+  <div class="row">
+    <!-- SHIPPING CART -->
+    <div class="col-lg-8 mb-4 mb-lg-0">
+      <div class="bg-dark text-white px-4 py-3">
+        <div class="row align-items-center text-center">
+          <div class="col-md-6 text-md-start"><a>My Shopping cart</a></div>
+          <div class="col-md-6 text-md-end">
+            <button data-action="clear" class="btn btn-danger btn-sm update-cart" data-bs-toggle="modal" data-bs-target="#ClearCartModal">Clear Cart</button>
+          </div>
+        </div>
+      </div><br>
+      <!-- CART TABLE-->
+      <div class="table-responsive mb-4">
+        {% if items %}
+        <table class="table text-nowrap text-white" width="100%">
+          <col style="width:10%">
+          <col style="width:45%">
+          <col style="width:15%">
+          <col style="width:15%">
+          <col style="width:15%">
+        <thead>
+          <tr class="bg-dark text-center text-light pt-2 pb-2">
+            <th scope="col">Image</th>
+            <th scope="col" class="text-wrap">Name</th>
+            <th scope="col">@Price</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td class="text-center"><a href="{% url 'product_detail' item.product.id %}"><img src="{{ item.product.image1.url }}" width="50px" height="50px" alt="..." /></a></td>
+            <td class="align-middle text-left text-truncate"><a href="{% url 'product_detail' item.product.id %}">{{item.product.name}}</a></td>
+            <td class="align-middle text-center">{{item.product.price}}</td>
+            <td class="align-middle text-center">
+
+
+                <input id="add_item" name="add_item" type="hidden" value={{item.product.id}}>
+                <div class="d-flex align-items-center justify-content-between py-1 px-3">
+                  <div class="quantity">
+                    <div><input data-product="{{item.product.id}}" data-action="remove" class="btn btn-dark update-cart" name="Decrease_val" type="submit" value='-'></div>
+                    <input class="form-control border-0 shadow-0 p-2 text-light" type="text" value="{{item.quantity}}">
+                    <div><input data-product="{{item.product.id}}" data-action="add" class="btn btn-dark update-cart" name="Increase_val" type="submit" value='+'></div>
+                  </div>
+                </div>
+
+            </td>
+            <td class="align-middle text-center"><i class="bi bi-currency-rupee"></i>{{item.get_total}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        </table>
+        {% else %}
+        <h5>Your cart is empty, do shopping to fill your cart!</h5>
+        {% endif %}
+      </div>
+      <!-- CART NAV-->
+      <div class="bg-dark text-white px-4 py-3">
+        <div class="row align-items-center text-center">
+          <div class="col-md-6 text-md-start"><a class="btn btn-outline-primary btn-sm" href="{% url 'product' %}"><i class="fas fa-long-arrow-alt-left me-2"> </i>Continue shopping</a></div>
+          {% if items %}
+          <div class="col-md-6 text-md-end"><a class="btn btn-outline-success btn-sm" href="{% url 'checkout' %}">Procceed to checkout<i class="fas fa-long-arrow-alt-right ms-2"></i></a></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <!-- ORDER TOTAL -->
+    <div class="col-lg-4">
+      <div class="card border-0 rounded-0 p-lg-4 bg-dark">
+        <div class="card-body">
+          <h5 class="text-uppercase mb-4">Cart total</h5>
+          <ul class="list-unstyled mb-0">
+            <li class="d-flex align-items-center justify-content-between"><strong class="text-uppercase small font-weight-bold">Subtotal</strong><span class="text-muted small">{{ order.get_cart_total }}</span></li>
+            {% if items %}
+            <li class="d-flex align-items-center justify-content-between"><strong class="text-uppercase small font-weight-bold">Shipping Charges</strong><span class="text-muted small">40.0</span></li>
+            {% endif %}
+            <li class="border-bottom my-2"></li>
+            {% if items %}
+            <li class="d-flex align-items-center justify-content-between mb-4"><strong class="text-uppercase small font-weight-bold">Total</strong><span><i class="bi bi-currency-rupee"></i>{{ order.get_cart_total|add:40 }}</span></li>
+            {% else %}
+            <li class="d-flex align-items-center justify-content-between mb-4"><strong class="text-uppercase small font-weight-bold">Total</strong><span><i class="bi bi-currency-rupee"></i>{{ order.get_cart_total }}</span></li>
+            {% endif %}
+            <li>
+              <form action="#">
+                <div class="input-group mb-0">
+                  <input class="form-control" type="text" placeholder="Enter your coupon">
+                  <button class="btn btn-light btn-sm w-100 mt-2" type="submit"> <i class="fas fa-gift me-2"></i>Apply coupon</button>
+                </div>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+      <!-- PREVIOUS ORDERS -->
+      {% if user.is_authenticated %}
+      <h4 class="fw-bold mt-4 pb-2">My Previous Orders</h4>
+      <table class="table table-dark table-striped" width="100%">
+        <col style="width:10%">
+        <col style="width:25%">
+        <col style="width:20%">
+        <col style="width:10%">
+        <col style="width:15%">
+        <col style="width:20%">
+        <thead>
+          <tr>
+            <th scope="col">Sr.No.</th>
+            <th scope="col">Order Id</th>
+            <th scope="col">Date</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total Amount</th>
+            <th scope="col">Options</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in order_done %}
+          <tr>
+            <td class="text-center">{{ forloop.counter }}</td>
+            <td>{{ order.transaction_id }}</td>
+            <td>{{ order.completed_date }}</td>
+            <td class="text-center">{{ order.get_cart_items }}</td>
+            <td class="text-center">{{ order.get_cart_total }}</td>
+            <td>
+              <a class="btn btn-info btn-sm" href="{% url 'invoice' order.id %}"><i class="bi bi-file-earmark-text"></i>&ensp;Get Invoice</a>
+              <a class="btn btn-danger btn-sm" href="{% url 'get_pdf' order.id %}"><i class="bi bi-file-earmark-pdf"></i>&ensp;Get PDF</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<script src="{% static 'js/quantity.js' %}"></script>
+<link href="{% static 'css/home.css' %}" rel="stylesheet">
+<style>
+input {
+    color: white !important;
+}
+</style>
+
+{% endblock body %}
+

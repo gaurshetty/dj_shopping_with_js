@@ -1,0 +1,43 @@
+{% extends "index.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+{% block title %}
+Register Page
+{% endblock title %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-6 pt-4 pb-4 mx-auto content bg-dark">
+            <div class="text-center">
+                <img class="mb-1" src="{% static 'assets/cart.png' %}" width="50px">
+                <h1 class="h3 mb-1 font-weight-normal">Create your account!</h1><br>
+            </div><hr>
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    {% bootstrap_form form %}
+                </fieldset>
+                <div class="d-grid gap-2 col-6 mx-auto form-group">
+                    <button class="btn btn-info mb-4" type="submit" value="Submit">Sign Up</button>
+                    <button class="js-captcha-refresh"></button>
+                </div>
+            </form>
+            <div class="border-top pt-3">
+                <small class="text-muted">Already have an account?<a class="ms-2" href="{% url 'login' %}">Sign In</a></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+form, input, label, p {
+    color: white !important;
+}
+</style>
+
+{% endblock body %}

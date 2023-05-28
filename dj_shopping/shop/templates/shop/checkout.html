@@ -1,0 +1,131 @@
+{% extends "index.html" %}
+{% load static %}
+{% load cust_filter %}
+{% load django_bootstrap5 %}
+
+{% block title %}
+Checkout Page
+{% endblock title %}
+
+{% block body %}
+<div class="container text-light">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between aligh-items-center mb-3">
+        <h4 class="text-right">Shipping Information</h4>
+      </div><hr>
+
+      <form id="form" method="POST">
+        {% csrf_token %}
+        {% if user.is_authenticated %}
+          <div class="row mt-2">
+            <span class="text-white-50"><a class="fw-bold">Name: </a>{{ user.first_name|title }} {{ user.last_name|title }}</span>
+            <span class="text-white-50"><a class="fw-bold">Email: </a>{{ user.email }}</span>
+          </div>
+        {% else %}
+          <div class="row mt-2">
+            <div class="col-md-4"><label class="labels"><small>First Name</small></label>
+              <input type="text" name="first_name" class="form-control" placeholder="First Name" required></div>
+            <div class="col-md-4"><label class="labels"><small>Last Name</small></label>
+              <input type="text" name="last_name" class="form-control" placeholder="Last Name"></div>
+            <div class="col-md-4"><label class="labels"><small>Email</small></label>
+              <input type="text" name="email" class="form-control" placeholder="Email"></div>
+          </div>
+        {% endif %}
+        {% if order.shipping == None %}
+          {% if shipaddr == None %}
+          <div class="row mt-2">
+            <h6 class="text-muted text-center">Address Information:</h6>
+            <div class="col-md-6"><label class="labels"><small>House/Residence</small></label>
+              <input type="text" name="house" class="form-control" placeholder="House/Residence" required></div>
+            <div class="col-md-6"><label class="labels"><small>Street/Area</small></label>
+              <input type="text" name="street" class="form-control" placeholder="Street/Area"></div>
+            <div class="col-md-6"><label class="labels"><small>City</small></label>
+              <input type="text" name="city" class="form-control" placeholder="City"></div>
+            <div class="col-md-6"><label class="labels"><small>State</small></label>
+              <input type="text" name="state" class="form-control" placeholder="State"></div>
+            <div class="col-md-6"><label class="labels"><small>Pincode</small></label>
+              <input type="text" name="pincode" class="form-control" placeholder="Pincode"></div>
+            <div class="col-md-6"><label class="labels"><small>Phone No.</small></label>
+              <input type="text" name="phone" class="form-control" placeholder="Phone No."></div>
+          </div>
+          {% else %}
+            <div class="row mt-2">
+              <span class="text-white-50"><a class="fw-bold">Phone No.: </a>{{ shipaddr.phone }}</span>
+              <span class="text-white-50"><a class="fw-bold">Address: </a>{{ shipaddr.house }},</span>
+              <span class="text-white-50">{{ shipaddr.street }}, {{ shipaddr.city }},</span>
+              <span class="text-white-50">{{ shipaddr.state }}, {{ shipaddr.pincode }}</span>
+            </div>
+          {% endif %}
+        {% else %}
+        <div class="row mt-2">
+          <span class="text-white-50"><a class="fw-bold">Phone No.: </a>{{ user.address.phone }}</span>
+          <span class="text-white-50"><a class="fw-bold">Address: </a>{{ user.address.house }},</span>
+          <span class="text-white-50">{{ user.address.street }}, {{ user.address.city }},</span>
+          <span class="text-white-50">{{ user.address.state }}, {{ user.address.pincode }}</span>
+        </div>
+        {% endif %}
+        <hr>
+        <div class="d-grid col-6 mx-auto">
+          <button class="btn btn-primary" type="submit">Confirm and Proceed to Pay</button>
+        </div>
+      </form>
+
+    </div>
+<!------------------------------------------------------------------------------->
+    <div class="col-md-6">
+      <div class="d-flex justify-content-between aligh-items-center mb-3">
+        <h4 class="text-right">Order Summary</h4>
+        <a class="btn btn-primary" href="{% url 'cart' %}">Go to Cart</a>
+      </div><hr>
+      <!-- CART TABLE-->
+      <div class="table-responsive mb-4">
+        <table class="table table-dark table-hover text-white" width="100%">
+          <col style="width:15%">
+          <col style="width:50%">
+          <col style="width:15%">
+          <col style="width:20%">
+          <thead>
+          <tr class="bg-dark text-center text-light">
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Total</th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for item in items %}
+          <tr>
+            <td class="text-center"><a href="{% url 'product_detail' item.product.id %}"><img src="{{ item.product.image1.url }}" width="50px" height="50px" alt="..."/></a></td>
+            <td class="text-wrap"><a href="{% url 'product_detail' item.product.id %}">{{item.product.name}}</a></td>
+            <td class="align-middle text-center">{{item.quantity}}</td>
+            <td class="align-middle text-center"><i class="bi bi-currency-rupee"></i>{{item.get_total}}</td>
+          </tr>
+          {% endfor %}
+          <tr>
+            <th colspan="3" class="text-end">Subtotal : </th>
+            <td class="text-center"><i class="bi bi-currency-rupee"></i>{{order.get_cart_total}}</td>
+          </tr>
+          <tr>
+            <th colspan="3" class="text-end">Shipping Charges : </th>
+            <td class="text-center"><i class="bi bi-currency-rupee"></i>40.0</td>
+          </tr>
+          <tr>
+            <th colspan="3" class="text-end">Total : </th>
+            <td class="text-center"><i class="bi bi-currency-rupee"></i>{{order.get_cart_total|add:40}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+form, input, label, p {
+    color: white !important;
+}
+</style>
+
+{% endblock body %}
+

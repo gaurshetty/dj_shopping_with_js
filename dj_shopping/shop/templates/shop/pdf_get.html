@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div class="container p-4">
+    <h2 class="invoice"># INVOICE #</h2>
+    <hr>
+    <div class="company">
+        <h1 class="company">ShettyMart</h1>
+        <p class="tag-line">UNLIMITED SHOPPING WITH ENDLESS JOY!</p>
+    </div>
+    <hr>
+
+    <table border="0">
+        <thead>
+            <tr>
+                <th style="text-align:left; padding-left: 10px; padding-bottom:5px"><h1>Shipping Address:</h1></th>
+                <th style="text-align:right; padding-right: 10px; padding-bottom:5px"><h1>Invoice Details:</h1></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="center">
+                    <p><strong>Name: </strong>{{user}},</p>
+                    <p>{{address.house|title}}, {{address.street|title}},</p>
+                    <p>{{address.city|title}}, {{address.state|title}}, {{address.pincode}}</p>
+                    <p><strong>{{address.phone}}</strong></p>
+                </td>
+                <td class="center">
+                    <h4 class="textleft"><strong>Invoice No. </strong>{{ order.transaction_id }}</h4>
+                    <h4 class="textleft"><strong></strong></h4>
+                    <h4 class="textleft"><strong>Order Date: {{ order.completed_date }}</strong></h4>
+                    <h4 class="textleft"><strong></strong></h4>
+                    <h4 class="textleft"><strong>Order Status: </strong>
+                    {% if order.complete %} Paid order {% else %} Unpaid order</h4>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table><hr><br><br>
+    <table border="1">
+      <thead>
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <th style="width:10%">Sr.No.</th>
+          <th style="width:40%" class="text-wrap">Product Name</th>
+          <th style="width:15%">@Price</th>
+          <th style="width:10%">Quantity</th>
+          <th style="width:10%">Discount</th>
+          <th style="width:15%">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <td style="text-align: center;">{{ forloop.counter }}</td>
+          <td style="padding-left:10px">{{ item.product.name }}</td>
+          <td style="text-align: center;">{{ item.product.price }}</td>
+          <td style="text-align: center;">{{ item.quantity }}</td>
+          <td style="text-align: center;">{{ item.product.discount }}%</td>
+          <td style="text-align: center;">{{ item.get_total }}</td>
+        </tr>
+        {% endfor %}
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <th colspan="3" style="text-align: right; padding-right: 10px">Total :</th>
+          <td style="text-align: center;">{{order.get_cart_items}}</td>
+          <td></td>
+          <td style="text-align: center;">{{order.get_cart_total}}</td>
+        </tr>
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <th colspan="5" style="text-align: right; padding-right: 10px">Shipping Charges :</th>
+          <td style="text-align: center;">40.0</td>
+        </tr>
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <th colspan="5" style="text-align: right; padding-right: 10px">Grand Total :</th>
+          <td style="text-align: center; font-weight: bold;">{{order.get_cart_total|add:40}}.0</td>
+        </tr>
+        <tr style="padding-top:5px; padding-bottom:5px;">
+          <th colspan="3" style="text-align: right; padding-right: 10px">
+              <p>Note: Order can be cancelled only within the 24 hours of order confirmation. Please read the terms and condition before order cancellation.</p>
+          </th>
+          <td colspan="3" style="text-align: center; color:red; font-weight: bold; font-size: 40px; padding-top:15px;">Rs. {{order.get_cart_total|add:40}}.0</td>
+        </tr>
+      </tbody>
+    </table>
+    <p></p>
+    <div style="text-align: center; padding-top:200px">.</div>
+    <hr>
+    <p style="text-align: center">&copy; Copyrights. All rights reserved. ShettyMart.com</p>
+</div>
+
+
+<style>
+h2.invoice {
+    text-align: right;
+    font-size: 20px
+}
+h4.textleft {
+    text-align:right;
+    margin-right: 50px;
+    padding-bottom: 0px;
+}
+h1.company {
+    font-family: courier;
+    text-align: center;
+    font-size: 50px;
+    text-shadow: 2px 2px #FF0000;
+    color: red;
+    margin-bottom: 0px;
+    padding-bottom: 0px;
+}
+p.tag-line {
+    text-align: center;
+    margin-top: 0px;
+    padding-top: 0px;
+}
+td.center {
+    margin-left: 50px;
+}
+
+
+</style>
+
+</body>
+</html>
